@@ -12,24 +12,35 @@ const App = () => {
   );
 
   useEffect(() => {
-    // Task 1: Fetch books from API
-    // Hint: Use the fetch function to get data from 'https://reactnd-books-api.udacity.com/books'
-    // Make sure to include the necessary authorization header if required
-    // After fetching, set the books state with the fetched data
-    // Remember to handle any errors that may occur during the fetch
-
     const fetchBooks = async () => {
-      // your code here for task 1
+      try {
+        const response = await fetch('https://reactnd-books-api.udacity.com/books', {
+          headers: { 'Authorization': 'whatever-you-want' },
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch books');
+        }
+
+        const data = await response.json();
+        setBooks(data.books);
+        setFilteredBooks(data.books);
+      } catch (error) {
+        console.error('Error fetching books:', error);
+      }
     };
 
     fetchBooks();
   }, []);
 
   const handleSearch = (searchText) => {
-    // Task 2: Implement search functionality
-    // Hint: Filter the books array based on the searchText input
-    // Convert both the book title and searchText to lowercase for a case-insensitive comparison
-    // Update the filteredBooks state with the result of the filtering
+    const lowerCaseSearch = searchText.toLowerCase();
+    const filtered = books.filter(
+      (book) =>
+        book.title.toLowerCase().includes(lowerCaseSearch) ||
+        book.authors.toLowerCase().includes(lowerCaseSearch)
+    );
+    setFilteredBooks(filtered);
   };
 
   const handleSuccessfulRegistration = () => {
