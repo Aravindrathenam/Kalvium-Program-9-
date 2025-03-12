@@ -3,6 +3,7 @@ import './App.css';
 
 // Truncate text to a specified number of words per line
 const truncateText = (text, maxWordsPerLine) => {
+  if (!text) return ''; // Handle empty text case
   const words = text.split(' ');
   const lines = [];
   for (let i = 0; i < words.length; i += maxWordsPerLine) {
@@ -11,25 +12,39 @@ const truncateText = (text, maxWordsPerLine) => {
   return lines.join('<br />');
 };
 
-// Task 5: Render the list of books
-// Hint: In the BooksList component, map over the 'books' array to render each book's details.
-// Use the truncateText function for the title and authors to ensure proper formatting.
-
 const BooksList = ({ books }) => {
   return (
     <div className="books-grid">
-      {books.map((book) => (
-        <div key={book.id} className="book-item">
-          {/* Task 5.1: Display the book's thumbnail */}
-          <p
-            dangerouslySetInnerHTML={{
-              __html: truncateText(book.title, 3),
-            }}
-          />
-          {/* Task 5.2: Use truncateText to display the book's authors */}
-          <p className="free">Free</p>
-        </div>
-      ))}
+      {books.length > 0 ? (
+        books.map((book) => (
+          <div key={book.id} className="book-item">
+            {/* Display book thumbnail if available */}
+            {book.imageLinks?.thumbnail && (
+              <img src={book.imageLinks.thumbnail} alt={book.title} className="book-thumbnail" />
+            )}
+            
+            {/* Display truncated book title */}
+            <p
+              dangerouslySetInnerHTML={{
+                __html: truncateText(book.title, 3),
+              }}
+            />
+
+            {/* Display truncated authors */}
+            <p
+              className="book-authors"
+              dangerouslySetInnerHTML={{
+                __html: book.authors ? truncateText(book.authors.join(', '), 3) : 'Unknown Author',
+              }}
+            />
+
+            {/* Display "Free" label */}
+            <p className="free">Free</p>
+          </div>
+        ))
+      ) : (
+        <p>No books available</p>
+      )}
     </div>
   );
 };
